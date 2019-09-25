@@ -28,7 +28,7 @@ cd progenomes_classifier
 python setup.py
 ```
 
-Note: in the following examples we assume that the python script ```classify-genomes``` is in the system path.
+Note: in the following examples we assume that the python script ```progenome-classifier``` is in the system path.
 
 
 Simple examples
@@ -43,7 +43,7 @@ gunzip AWWC01.1.fsa_nt.gz
 
 Find the taxonomy annotation with classify-genomes:
 ```bash
-classify-genomes AWWC01.1.fsa_nt
+progenome-classifier AWWC01.1.fsa_nt
 ```
 
 Which results in:
@@ -81,7 +81,7 @@ Command options
 
 The tool expect as input a fasta file:
 ```
-classify-genomes <fasta_file> [options]
+progenome-classifier <fasta_file> [options]
 ```
 
 The options are:
