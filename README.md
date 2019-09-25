@@ -16,7 +16,7 @@ If you have [conda](https://conda.io/docs/), you can install the dependencies an
 ```bash
 cd progenomes_classifier/env
 conda env create -f classify-genomes.yaml
-source activate classify-genomes-ENV
+source activate progenome-classifier-ENV
 ```
 Note: type `source deactivate` to deactivate an active environment.
 
