@@ -15,7 +15,7 @@ Pre-requisites
 If you have [conda](https://conda.io/docs/), you can install the dependencies and create an environment (after cloning the directory, see Installation):
 ```bash
 cd progenomes_classifier/env
-conda env create -f classify-genomes.yaml
+conda env create -f progenome-classifier.yaml
 source activate progenome-classifier-ENV
 ```
 Note: type `source deactivate` to deactivate an active environment.
