@@ -49,6 +49,7 @@ Options:
   -v  INT     verbose level: 1=error, 2=warning, 3=message, 4+=debugging [3]
   -o  FILE    output file name [stdout]
   -m  FILE    save the 10 marker genes [None]
+  -M  FILE    save the 10 marker genes and exit [None]
   -s          short output format (one-line output)
   -S          map to specI, instead of mOTUs
   -db STR     database: nr=non-reduntant, cen=centroids [nr]
@@ -80,6 +81,7 @@ def main(argv=None):
     parser.add_argument('-t', type=int, action="store", dest='threads', default=None, help='Number of threads to be used.')
     parser.add_argument('-o', action="store", dest='output', default=None, help='name of output file')
     parser.add_argument('-m', action="store", dest='save_10_MGs', default=None, help='save the 10 marker genes')
+    parser.add_argument('-M', action="store", dest='save_10_MGs_only', default=None, help='save the 10 marker genes, and do not run vsearch')
     parser.add_argument('-s', action='store_true', default=None, dest='short_output', help='print the output in only one line')
     parser.add_argument('-S', action='store_true', default=None, dest='map_to_specI', help='map to specI, instead of mOTUs')
     parser.add_argument('-db', action='store', default=None, dest='db', help='select the db (nr or centroids)',choices=['nr','cen'])
@@ -93,6 +95,7 @@ def main(argv=None):
     if (args.output is None): args.output = ""
     if (args.threads is None): args.threads = 1
     if (args.save_10_MGs is None): args.save_10_MGs = ""
+    if (args.save_10_MGs_only is None): args.save_10_MGs_only = ""
     if (args.short_output is None): args.short_output = False
     if (args.map_to_specI is None): args.map_to_specI = False
 
@@ -215,6 +218,17 @@ def main(argv=None):
         sys.stderr.write("\nfounded_genes:\n")
         for ii in founded_genes:
             sys.stderr.write(str(ii)+": "+str(founded_genes[i])+"\n")
+
+    # check if we only want to extract the genes and we dont care of vsearch
+    if args.save_10_MGs_only != "": # save it somewhere
+        try:
+            shutil.move(genes_temp_file.name,args.save_10_MGs_only) #It is not atomic if the files are on different filsystems.
+        except:
+            sys.stderr.write("[E::main] Error: failed to save the marker genes sequences\n")
+            os.remove(os.path.abspath(os.path.join(genes_temp_file.name)))
+            sys.exit(1)
+        sys.exit(0) # correct and exit
+
 
     ## =========================================================================
     # if genes are detected, then we map them with vsearch
@@ -425,7 +439,7 @@ def main(argv=None):
             outfile.write("Consensus specI: "+best_motu.replace("ref_mOTU_v25_","specI_v3_")+"\n")
         else:
             outfile.write("Consensus specI: "+best_motu+"\n")
-        outfile.write("Number of detected genes: "+str(sum(founded_genes.values()))+"\n")
+        outfile.write("Number of detected genes: "+str(sum(founded_genes.values()))+" out of 40\n")
         outfile.write("Number of mapped genes: "+str(sum(all_tax.values()))+"\n")
         outfile.write("Number of genes that map to -1: "+str(n_min_1)+"\n")
         outfile.write("Percentage of agreeing genes: "+aggr_g+"\n")
