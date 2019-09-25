@@ -5,9 +5,7 @@ channels:
   - conda-forge
 dependencies:
   - vsearch
-  - samtools
   - cdbtools
-  - bwa
   - perl
   - prodigal
   - hmmer

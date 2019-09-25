@@ -8,7 +8,6 @@ Pre-requisites
 * cdbtools
 * Prodigal 2.6.3
 * Python 2.7.12
-* SAMtools 1.3.1
 * HMMER 3.1b2
 * vsearch
 

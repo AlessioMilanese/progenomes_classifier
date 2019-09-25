@@ -139,9 +139,9 @@ def main(argv=None):
         sys.exit(1)
 
     # SAMtools
-    if not is_tool("samtools"):
-        sys.stderr.write("[E::main] Error: samtools is not in the path. Please install samtools.\n")
-        sys.exit(1)
+    #if not is_tool("samtools"):
+    #    sys.stderr.write("[E::main] Error: samtools is not in the path. Please install samtools.\n")
+    #    sys.exit(1)
 
     # HMMER
     if not is_tool("hmmsearch"):
