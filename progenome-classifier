@@ -108,7 +108,14 @@ def main(argv=None):
         sys.exit(1)
 
     # COG that we evaluate
-    marker_genes = {'COG0012':0, 'COG0016':1, 'COG0018':2, 'COG0172':3, 'COG0215':4, 'COG0495':5, 'COG0525':6, 'COG0533':7, 'COG0541':8, 'COG0552':9}
+    marker_genes = {"COG0012":0, "COG0049":1, "COG0052":2, "COG0048":3, "COG0016":4,
+                      "COG0018":5, "COG0080":6, "COG0088":7, "COG0081":8, "COG0087":9,
+                       "COG0090":10, "COG0085":11, "COG0091":12, "COG0092":13, "COG0093":14,
+                        "COG0094":15, "COG0096":16, "COG0097":17, "COG0098":18, "COG0099":19,
+                         "COG0100":20, "COG0102":21, "COG0103":22, "COG0124":23, "COG0172":24,
+                          "COG0184":25, "COG0185":26, "COG0186":27, "COG0197":28, "COG0200":29,
+                           "COG0201":30, "COG0202":31, "COG0215":32, "COG0256":33, "COG0522":34,
+                            "COG0495":35, "COG0533":36, "COG0525":37, "COG0552":38, "COG0541":39}
 
     # --------------------------------------------------------------------------
     #   0. CHECK DEPENDENCIES
@@ -153,7 +160,14 @@ def main(argv=None):
     genes = tempfile.mkdtemp()
 
     # count the number of founded genes
-    founded_genes = {'COG0012':0, 'COG0016':0, 'COG0018':0, 'COG0172':0, 'COG0215':0, 'COG0495':0, 'COG0525':0, 'COG0533':0, 'COG0541':0, 'COG0552':0}
+    founded_genes = {"COG0012":0, "COG0049":0, "COG0052":0, "COG0048":0, "COG0016":0,
+                      "COG0018":0, "COG0080":0, "COG0088":0, "COG0081":0, "COG0087":0,
+                       "COG0090":0, "COG0085":0, "COG0091":0, "COG0092":0, "COG0093":0,
+                        "COG0094":0, "COG0096":0, "COG0097":0, "COG0098":0, "COG0099":0,
+                         "COG0100":0, "COG0102":0, "COG0103":0, "COG0124":0, "COG0172":0,
+                          "COG0184":0, "COG0185":0, "COG0186":0, "COG0197":0, "COG0200":0,
+                           "COG0201":0, "COG0202":0, "COG0215":0, "COG0256":0, "COG0522":0,
+                            "COG0495":0, "COG0533":0, "COG0525":0, "COG0552":0, "COG0541":0}
 
 
     find_genes = "python "+ relative_path + 'makePaddedMG.py ' + args.fasta_file
@@ -408,9 +422,9 @@ def main(argv=None):
         outfile.write("Consensus NCBI ID: "+best_id+"\n")
         outfile.write("Consensus taxonomy: "+best_taxonomy+"\n")
         if args.map_to_specI:
-            outfile.write("Consensus mOTUs: "+best_motu.replace("ref_mOTU_v25_","specI_v3_")+"\n")
+            outfile.write("Consensus specI: "+best_motu.replace("ref_mOTU_v25_","specI_v3_")+"\n")
         else:
-            outfile.write("Consensus mOTUs: "+best_motu+"\n")
+            outfile.write("Consensus specI: "+best_motu+"\n")
         outfile.write("Number of detected genes: "+str(sum(founded_genes.values()))+"\n")
         outfile.write("Number of mapped genes: "+str(sum(all_tax.values()))+"\n")
         outfile.write("Number of genes that map to -1: "+str(n_min_1)+"\n")
