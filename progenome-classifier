@@ -40,9 +40,9 @@ class CapitalisedHelpFormatter(argparse.HelpFormatter):
 def msg(name=None):
     str_msg = '''
 \00
-Program: classify-genomes - a tool for genome taxonomy annotation
+Program: progenome-classifier - a tool for genome taxonomy annotation
 
-Usage: classify-genomes <fasta_file> [options]
+Usage: progenome-classifier <fasta_file> [options]
 
 Options:
   -t  INT     number of threads [1]
