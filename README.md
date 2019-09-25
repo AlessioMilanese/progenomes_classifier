@@ -1,6 +1,6 @@
-classify-genomes
+Progenome classifier
 ========
-This tool classify genomes sequences (as well as metagenomic assembled genome) according to the [mOTUs taxonomy](https://github.com/motu-tool/mOTUs_v2) (mOTUs version 2.0.0).
+This tool classify genomes sequences (as well as metagenomic assembled genome) according to the specI taxonomy used in [Progenomes 2](http://progenomes.embl.de).
 
 Pre-requisites
 --------------
@@ -14,7 +14,7 @@ Pre-requisites
 
 If you have [conda](https://conda.io/docs/), you can install the dependencies and create an environment (after cloning the directory, see Installation):
 ```bash
-cd classify-genomes/env
+cd progenomes_classifier/env
 conda env create -f classify-genomes.yaml
 source activate classify-genomes-ENV
 ```
@@ -23,8 +23,8 @@ Note: type `source deactivate` to deactivate an active environment.
 Installation
 --------------
 ```bash
-git clone https://github.com/AlessioMilanese/classify-genomes.git
-cd classify-genomes
+git clone https://github.com/AlessioMilanese/progenomes_classifier.git
+cd progenomes_classifier
 python setup.py
 ```
 
