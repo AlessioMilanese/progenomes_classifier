@@ -30,7 +30,7 @@ python setup.py
 Note: in the following examples we assume that the python script ```progenome-classifier``` is in the system path.
 
 
-Simple examples
+Simple example
 --------------
 
 Download the genome with id [AWWC00000000](https://www.ncbi.nlm.nih.gov/nuccore/AWWC00000000.1) that was assembled in the HMP project and annotated as *Jonquetella sp. BV3C21*
@@ -112,7 +112,9 @@ COG0103_1	1111126.SAMN00829156.HMPREF1249_0251#COG0103#specI_v3_Cluster1951#1779
 ```
 
 Let's analyse the result: the genome in the file `AWWC01.1.fsa_nt` is annotated as `Jonquetella anthropi`, which belongs to the specI `specI_v3_Cluster1951`.
+
 The genome contains `40` marker genes (MGs) out of 40. The marker genes have the property to be present in single-copy in bacterial genomes, hence if the tool extract more than 40 MGs there might be problems with the genome that you are analysing (check `Unique marker genes found in multiple copies`). After that there is the information of the number of genes that were mapped to the specI database (`Number of mapped genes`) and the number of genes that support the consensus taxonomy (in this case `100%`).
+
 Finally, there is a list with all the identified genes, the target gene in the specI database and the percentage identity.
 
 Command options
