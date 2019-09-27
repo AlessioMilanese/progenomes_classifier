@@ -150,6 +150,23 @@ def main(argv=None):
         sys.stderr.write("[E::main] Error: vsearch is not in the path. Please install vsearch.\n")
         sys.exit(1)
 
+    # --------------------------------------------------------------------------
+    #   0. CHECK FILE
+    # --------------------------------------------------------------------------
+    # check that it is a fasta file
+    try:
+        o = open(args.fasta_file,"r")
+        # check that it starts with ">"
+        if not(o.readline().startswith(">")):
+            sys.stderr.write("[E::main] Error. Not a fasta file: "+fasta_name+"\n")
+            sys.stderr.write("          Fasta file is expected to start with '>'\n")
+            o.close()
+            sys.exit(1)
+        o.close()
+    except:
+        sys.stderr.write("[E::main] Error: Cannot open file: "+fasta_name+"\n")
+        sys.exit(1)
+
 
     # --------------------------------------------------------------------------
     #   1. EXTRACT GENES
