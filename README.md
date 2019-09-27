@@ -111,7 +111,9 @@ COG0018_1	1111126.SAMN00829156.HMPREF1249_1499#COG0018#specI_v3_Cluster1951#8207
 COG0103_1	1111126.SAMN00829156.HMPREF1249_0251#COG0103#specI_v3_Cluster1951#1779538	100.0
 ```
 
-Let's analyse the result: the genome in the file `AWWC01.1.fsa_nt` is annotated as `Jonquetella anthropi`, which belongs to the specI `specI_v3_Cluster1951`.
+Let's analyse the result:
+
+the genome in the file `AWWC01.1.fsa_nt` is annotated as `Jonquetella anthropi`, which belongs to the specI `specI_v3_Cluster1951`.
 
 The genome contains `40` marker genes (MGs) out of 40. The marker genes have the property to be present in single-copy in bacterial genomes, hence if the tool extract more than 40 MGs there might be problems with the genome that you are analysing (check `Unique marker genes found in multiple copies`). After that there is the information of the number of genes that were mapped to the specI database (`Number of mapped genes`) and the number of genes that support the consensus taxonomy (in this case `100%`).
 
