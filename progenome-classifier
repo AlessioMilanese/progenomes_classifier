@@ -16,14 +16,14 @@ from collections import Counter
 
 
 # position of the script -------------------------------------------------------
-path_mOTUs = os.path.realpath(__file__)
-path_array = path_mOTUs.split("/")
+path_DB = os.path.realpath(__file__)
+path_array = path_DB.split("/")
 relative_path = "/".join(path_array[0:-1])
 relative_path = relative_path + "/"
 
 # check if setup.py has been ran already ---------------------------------------
-if not(os.path.isdir(relative_path+'db_mOTU')):
-    sys.stderr.write("[E::main] Error: database has not been downloaded. Run setup.py before using the motus profiler\n\n")
+if not(os.path.isdir(relative_path+'specI_DB')):
+    sys.stderr.write("[E::main] Error: database has not been downloaded. Run setup.py before using the progenomes classifier\n\n")
     sys.exit(1)
 
 
@@ -51,8 +51,7 @@ Options:
   -m  FILE    save the 10 marker genes [None]
   -M  FILE    save the 10 marker genes and exit [None]
   -s          short output format (one-line output)
-  -S          map to specI, instead of mOTUs
-  -db STR     database: nr=non-reduntant, cen=centroids [nr]
+  -H          print the result in HTML format (used on the progenomes website)
         '''
     return str_msg
 
@@ -83,21 +82,19 @@ def main(argv=None):
     parser.add_argument('-m', action="store", dest='save_10_MGs', default=None, help='save the 10 marker genes')
     parser.add_argument('-M', action="store", dest='save_10_MGs_only', default=None, help='save the 10 marker genes, and do not run vsearch')
     parser.add_argument('-s', action='store_true', default=None, dest='short_output', help='print the output in only one line')
-    parser.add_argument('-S', action='store_true', default=None, dest='map_to_specI', help='map to specI, instead of mOTUs')
-    parser.add_argument('-db', action='store', default=None, dest='db', help='select the db (nr or centroids)',choices=['nr','cen'])
+    parser.add_argument('-H', action='store_true', default=None, dest='print_html', help='print the output in html format')
     args = parser.parse_args()
 
     # set default for args.verbose
     if (args.verbose is None): args.verbose = 3
 
     # set the default
-    if (args.db is None): args.db = "nr"
     if (args.output is None): args.output = ""
     if (args.threads is None): args.threads = 1
     if (args.save_10_MGs is None): args.save_10_MGs = ""
     if (args.save_10_MGs_only is None): args.save_10_MGs_only = ""
     if (args.short_output is None): args.short_output = False
-    if (args.map_to_specI is None): args.map_to_specI = False
+    if (args.print_html is None): args.print_html = False
 
     # name fasta file
     fasta_name = args.fasta_file.split("/")[-1]
@@ -158,7 +155,8 @@ def main(argv=None):
     #   1. EXTRACT GENES
     # --------------------------------------------------------------------------
     # create a temp dir to save the intermediate results
-    if args.verbose > 2: sys.stderr.write("Extract genes\n")
+    if args.verbose > 2: sys.stderr.write("Extract genes...")
+    start = time.time()
 
     genes = tempfile.mkdtemp()
 
@@ -219,6 +217,10 @@ def main(argv=None):
         for ii in founded_genes:
             sys.stderr.write(str(ii)+": "+str(founded_genes[i])+"\n")
 
+    # print time
+    end_gene_finding = time.time()
+    if args.verbose > 2: sys.stderr.write(str( float("{0:.2f}".format(end_gene_finding - start)) )+" seconds\n")
+
     # check if we only want to extract the genes and we dont care of vsearch
     if args.save_10_MGs_only != "": # save it somewhere
         try:
@@ -229,6 +231,12 @@ def main(argv=None):
             sys.exit(1)
         sys.exit(0) # correct and exit
 
+    # find how many marker genes have multiple copies
+    n_MG_multiple_copies = 0
+    for cog in founded_genes:
+        if founded_genes[cog] > 1:
+            n_MG_multiple_copies = n_MG_multiple_copies + 1
+
 
     ## =========================================================================
     # if genes are detected, then we map them with vsearch
@@ -238,7 +246,8 @@ def main(argv=None):
         #   2. MAP GENES TO DATABASE
         # --------------------------------------------------------------------------
         # now in genes_temp_file.name we have all the extracted genes
-        if args.verbose > 2: sys.stderr.write("Map genes to mOTUs database\n")
+        if args.verbose > 2: sys.stderr.write("Map genes to specI database...")
+        start = time.time()
 
         # load COG cutoffs
         if args.verbose > 4: sys.stderr.write("  load cutoffs\n")
@@ -255,10 +264,7 @@ def main(argv=None):
         if args.verbose > 3:
             sys.stderr.write("temp file with result from vsearch: "+vsearch_res.name+"\n")
 
-        if args.db == "nr":
-            map_genes = "vsearch --usearch_global "+genes_temp_file.name+" --db "+relative_path+"db_mOTU/db_mOTU_DB_NR.fasta --id 0.94 --blast6out "+vsearch_res.name+" --minqt 0.7 --maxrejects 10000 --threads "+str(args.threads)
-        else:
-            map_genes = "vsearch --usearch_global "+genes_temp_file.name+" --db "+relative_path+"db_mOTU/db_mOTU_DB_CEN.fasta --id 0.94 --blast6out "+vsearch_res.name+" --minqt 0.7 --maxrejects 10000 --threads "+str(args.threads)
+        map_genes = "vsearch --usearch_global "+genes_temp_file.name+" --db "+relative_path+"specI_DB/progenomes2_40MGs.fasta.gz --id 0.94 --blast6out "+vsearch_res.name+" --minqt 0.7 --maxrejects 10000 --threads "+str(args.threads)
 
         map_genesCMD = shlex.split(map_genes)
         if args.verbose > 3:
@@ -285,6 +291,11 @@ def main(argv=None):
                 matches[query] = vals[1]
         tp.close()
 
+        # print time
+        end_mapping = time.time()
+        if args.verbose > 2: sys.stderr.write(str( float("{0:.2f}".format(end_mapping - start)) )+" seconds\n")
+        start = time.time()
+
         # remove file with the results from vsearch
         os.remove(os.path.abspath(os.path.join(vsearch_res.name)))
 
@@ -300,157 +311,172 @@ def main(argv=None):
 
 
         # --------------------------------------------------------------------------
-        #   3. FIND MOTUS FROM THE MAPPED GENES
+        #   3. FIND CONGRUENCES BETWEEN THE SPECIs
         # --------------------------------------------------------------------------
-        # now in matches we have the motus database ids
-        if args.verbose > 2: sys.stderr.write("Find taxonomy\n")
+        # now in matches we have the specI database ids
+        if args.verbose > 2: sys.stderr.write("Find assignemnt from genes...")
+        start = time.time()
 
-        # load gene -> MGC
-        f_gene2mgc = open(relative_path+"db_mOTU/db_mOTU_MAP_genes_to_MGCs.tsv","r")
-        gene2mgc = dict()
-        for i in f_gene2mgc:
-            all_v = i.rstrip().split("\t")
-            gene2mgc[all_v[0]] = all_v[3]
-        f_gene2mgc.close()
-        # load MGC -> mOTUs
-        f_mgc2motus = open(relative_path+"db_mOTU/db_mOTU_MAP_MGCs_to_mOTUs.tsv","r")
-        mgc2motu = dict()
-        for i in f_mgc2motus:
-            all_v = i.rstrip().split("\t")
-            mgc2motu[all_v[0]] = all_v[1]
-        f_mgc2motus.close()
-        # load ref-mOTUs taxonomy
-        tax = dict()
+        # we check from matches the congruences and how to classify the input ---
+        # find matches
+        n_agreeing_genes = "-" # percentage of agreeing genes
+        n_mapped_genes = len(matches)
 
-        f_ref_tax = open(relative_path+"db_mOTU/db_mOTU_taxonomy_ref-mOTUs.tsv","r")
-        for i in f_ref_tax:
-            all_v = i.rstrip().split("\t")
-            if all_v[1] != "not_profilable":
-                tax[all_v[1]] = all_v[8]
-        f_ref_tax.close()
-        # load meta-mOTUs taxonomy
-        f_meta_tax = open(relative_path+"db_mOTU/db_mOTU_taxonomy_meta-mOTUs.tsv","r")
-        for i in f_meta_tax:
-            all_v = i.rstrip().split("\t")
-            tax[all_v[0]] = all_v[7]
-        f_meta_tax.close()
-
-        # find match for the mapped genes
-        motus_match = dict()
-        n_min_1 = 0 # number of genes that maps to -1
-        for i in matches:
-            if args.db == "nr":
-                motu_m = mgc2motu[gene2mgc[matches[i]]]
-            else:
-                str_with_gene_id = ".".join(matches[i].split(".")[1].split("_"))
-                motu_m = mgc2motu[gene2mgc[str_with_gene_id]]
-            # if we map only to specI, what maps to meta-mOTUs is considered as -1
-            if args.map_to_specI:
-                if motu_m.startswith("meta"):
-                    motu_m = "-1"
-                    n_min_1 = n_min_1 + 1
-
-            # assign correct match
-            if motu_m != "-1":
-                motus_match[i] = tax[motu_m] + "@" + motu_m
-            else:
-                n_min_1 = n_min_1 + 1
-
-        # taxonomies
-        if len(motus_match) == 0:
+        if len(matches) == 0:
             best = "no match"
-            aggr_g = "NA"
         else:
-            all_tax = dict(Counter(motus_match.values()))
+            list_founded_speci = list()
+            for i in matches:
+                list_founded_speci.append(matches[i].split("#")[-2])
+
+            all_tax = dict(Counter(list_founded_speci))
             max_agree = max(all_tax.values())
             n_max = 0
+            list_n_max = list()
             for i in all_tax:
                 if all_tax[i] == max_agree:
                     n_max = n_max + 1
                     best = i
+                    list_n_max.append(i)
             if n_max > 1:
                 best = "inconsistent"
-                aggr_g = "NA"
             else:
-                aggr_g = str( ( max_agree/(sum(all_tax.values())) ) * 100 )+"%"
+                n_agreeing_genes = str( ( max_agree/(sum(all_tax.values())) ) * 100 )+"%" # percentage agreeing
 
+        # print time
+        end_assi = time.time()
+        if args.verbose > 2: sys.stderr.write(str( float("{0:.2f}".format(end_assi - start)) )+" seconds\n")
+        start = time.time()
    ## =========================================================================
-   # if no genes are detected, then no need to run vsearch and map motus
+   # if no genes are detected, then no need to run vsearch and map to specI
     else:
         best = "no_genes"
+        n_mapped_genes = 0
+    # ARRIVED HERE: we know what type of match it is
+    n_detected_genes = sum(founded_genes.values())
 
+    # if it is consistent, or inconsistent we find the taxonomy
+    tax_levels_class = ["-","-","-","-","-","-","-","-"]
+    if best != "no_genes" and best != "no match":
+        # we only need the taxonomy
+        tax = dict()
+        f_ref_tax = open(relative_path+"specI_DB/specI_taxonomy.tsv","r")
+        f_ref_tax.readline() # remove header
+        for i in f_ref_tax:
+            all_v = i.rstrip().split("\t")
+            tax[all_v[0]] = all_v[1:8]
+        f_ref_tax.close()
+        # find taxonomy agreement
+        # we use list_n_max
+        for i in range(7):
+            possible_vals = list()
+            for vv in list_n_max:
+                possible_vals.append(tax[vv][i])
+            tax_levels_class[i] = " / ".join(list(set(possible_vals)))
+        # merge the specI
+        tax_levels_class[7] = "/".join(list(set(list_n_max)))
+
+
+
+    # SET UP THE PRINTING ######################################################
     # general print
     if args.output != "":
         outfile = tempfile.NamedTemporaryFile(delete=False, mode="w")
         os.chmod(outfile.name, 0o644)
     else:
         outfile = sys.stdout
-        if args.verbose > 2: sys.stderr.write("\nRESULT:\n")
 
-    # split best into NCBI_id, NCBI_taxonomy and mOTU
-    if best == "no match":
-        best_id = "no match"
-        best_taxonomy = "no match"
-        best_motu = "no match"
-        # dummy variable
-        all_tax = {"dummy_var": 0}
-    elif best == "inconsistent":
-        best_id = "inconsistent"
-        best_taxonomy = "inconsistent"
-        best_motu = "inconsistent"
-    elif best == "no_genes":
-        best_id = "NA"
-        best_taxonomy = "NA"
-        best_motu = "NA"
-        all_tax = {"dummy_var": 0}
-        founded_genes = {"dummy_var": 0}
-        n_min_1 = 0
-        aggr_g = "0%"
-        motus_match = list()
-    else:
-        best_id = best.split(" ")[0]
-        best_taxonomy = " ".join(best.split(" ")[1:]).split("@")[0]
-        best_motu = best.split("@")[1]
+    # PRINT RESULT IN HTML FORMAT ==============================================
+    if args.print_html:
+        outfile.write("<h2>Result</h2>\n")
+        outfile.write("<strong>kingdom: </strong><em>"+(" ".join(tax_levels_class[0].split(" ")[1:]))+"</em><br>\n")
+        outfile.write("<strong>phylum: </strong><em>"+(" ".join(tax_levels_class[1].split(" ")[1:]))+"</em><br>\n")
+        outfile.write("<strong>class: </strong><em>"+(" ".join(tax_levels_class[2].split(" ")[1:]))+"</em><br>\n")
+        outfile.write("<strong>order: </strong><em>"+(" ".join(tax_levels_class[3].split(" ")[1:]))+"</em><br>\n")
+        outfile.write("<strong>family: </strong><em>"+(" ".join(tax_levels_class[4].split(" ")[1:]))+"</em><br>\n")
+        outfile.write("<strong>genus: </strong><em>"+(" ".join(tax_levels_class[5].split(" ")[1:]))+"</em><br>\n")
+        outfile.write("<strong>species: </strong><em>"+(" ".join(tax_levels_class[6].split(" ")[1:]))+"</em><br>\n")
+        outfile.write("<strong>specI: </strong>")
+        link_to_specI = list()
+        for i in tax_levels_class[7].split("/"):
+            link_to_specI.append('<a href="http://progenomes.embl.de/index.cgi?search='+i+'">'+i+'</a>')
+        outfile.write( (" / ".join(link_to_specI)) + "<br>\n")
+        outfile.write("<br>\n")
+
+        outfile.write("<h3>Classification information</h3>\n")
+        outfile.write("<strong>Number of detected genes:</strong> "+str(n_detected_genes)+"<br>\n")
+        outfile.write("<strong>Unique marker genes found in multiple copies [chimera?]:</strong> "+str(n_MG_multiple_copies)+"<br>\n")
+        outfile.write("<strong>Number of mapped genes:</strong> "+str(n_mapped_genes)+"<br>\n")
+        outfile.write("<strong>Percentage of agreeing genes:</strong> "+str(n_agreeing_genes)+"<br>\n")
+        outfile.write("<br>\n")
+
+        outfile.write("<h3>Single genes classification</h3>\n")
+        outfile.write("<table>\n")
+        outfile.write(" <tr>\n")
+        outfile.write("   <th>Gene from fasta file</th>\n")
+        outfile.write("   <th>SpecI gene</th>\n")
+        outfile.write("   <th>Percentage identity</th>\n")
+        outfile.write(" <tr>\n")
+        for i in matches:
+            outfile.write(" <tr>\n")
+            outfile.write("   <td style=\"text-align:center\">"+i+"</td>\n")
+            outfile.write("   <td style=\"text-align:center\">"+matches[i]+"</td>\n")
+            outfile.write("   <td style=\"text-align:center\">"+str(all_matched_perc_id[i])+"</td>\n")
+            outfile.write(" <tr>\n")
+        outfile.write("</table>\n")
+
+    # PRINT NORMAL RESULT ======================================================
+    if (not args.print_html) and (not args.short_output):
+        outfile.write("RESULT\n")
+        outfile.write("fasta sequence: "+fasta_name+"\n\n")
+
+        outfile.write("kingdom: "+(" ".join(tax_levels_class[0].split(" ")[1:]))+"\n")
+        outfile.write("phylum: "+(" ".join(tax_levels_class[1].split(" ")[1:]))+"\n")
+        outfile.write("class: "+(" ".join(tax_levels_class[2].split(" ")[1:]))+"\n")
+        outfile.write("order: "+(" ".join(tax_levels_class[3].split(" ")[1:]))+"\n")
+        outfile.write("family: "+(" ".join(tax_levels_class[4].split(" ")[1:]))+"\n")
+        outfile.write("genus: "+(" ".join(tax_levels_class[5].split(" ")[1:]))+"\n")
+        outfile.write("species: "+(" ".join(tax_levels_class[6].split(" ")[1:]))+"\n")
+        outfile.write("specI: "+tax_levels_class[7]+"\n\n")
 
 
-    if args.short_output: # print res in one line
+        outfile.write("Classification information\n")
+        outfile.write("Number of detected genes: "+str(n_detected_genes)+"\n")
+        outfile.write("Unique marker genes found in multiple copies [chimera?]: "+str(n_MG_multiple_copies)+"\n")
+        outfile.write("Number of mapped genes: "+str(n_mapped_genes)+"\n")
+        outfile.write("Percentage of agreeing genes: "+str(n_agreeing_genes)+"\n\n")
+
+        outfile.write("Single genes classification\n")
+        for i in matches:
+            outfile.write(i+"\t")
+            outfile.write(matches[i]+"\t")
+            outfile.write(str(all_matched_perc_id[i])+"\n")
+
+    # PRINT NORMAL RESULT - ONE LINE VERSION ===================================
+    if (not args.print_html) and args.short_output:
         outfile.write(fasta_name+"\t")
-        outfile.write(best_id+"\t")
-        outfile.write(best_taxonomy+"\t")
-        if args.map_to_specI:
-            outfile.write(best_motu.replace("ref_mOTU_v25_","specI_v3_")+"\t")
-        else:
-            outfile.write(best_motu+"\t")
-        outfile.write(str(sum(founded_genes.values()))+"\t")
-        outfile.write(str(sum(all_tax.values()))+"\t")
-        outfile.write(str(n_min_1)+"\t")
-        outfile.write(aggr_g)
-        for i in motus_match:
-            if args.map_to_specI:
-                outfile.write("\t"+i+"\t"+all_matched_perc_id[i]+"\t"+motus_match[i].replace("ref_mOTU_v25_","specI_v3_"))
-            else:
-                outfile.write("\t"+i+"\t"+all_matched_perc_id[i]+"\t"+motus_match[i])
-        outfile.write("\n")
-    else:
-        outfile.write("Fasta sequence: "+fasta_name+"\n")
-        outfile.write("Consensus NCBI ID: "+best_id+"\n")
-        outfile.write("Consensus taxonomy: "+best_taxonomy+"\n")
-        if args.map_to_specI:
-            outfile.write("Consensus specI: "+best_motu.replace("ref_mOTU_v25_","specI_v3_")+"\n")
-        else:
-            outfile.write("Consensus specI: "+best_motu+"\n")
-        outfile.write("Number of detected genes: "+str(sum(founded_genes.values()))+" out of 40\n")
-        outfile.write("Number of mapped genes: "+str(sum(all_tax.values()))+"\n")
-        outfile.write("Number of genes that map to -1: "+str(n_min_1)+"\n")
-        outfile.write("Percentage of agreeing genes: "+aggr_g+"\n")
-        outfile.write("\nGene annotation:\n")
-        for i in motus_match:
-            if args.map_to_specI:
-                outfile.write(i+"\t"+all_matched_perc_id[i]+"\t"+motus_match[i].replace("ref_mOTU_v25_","specI_v3_")+"\n")
-            else:
-                outfile.write(i+"\t"+all_matched_perc_id[i]+"\t"+motus_match[i]+"\n")
 
-    # move the temp file to the final destination ------------------------------
+        outfile.write((" ".join(tax_levels_class[0].split(" ")[1:]))+"\t")
+        outfile.write((" ".join(tax_levels_class[1].split(" ")[1:]))+"\t")
+        outfile.write((" ".join(tax_levels_class[2].split(" ")[1:]))+"\t")
+        outfile.write((" ".join(tax_levels_class[3].split(" ")[1:]))+"\t")
+        outfile.write((" ".join(tax_levels_class[4].split(" ")[1:]))+"\t")
+        outfile.write((" ".join(tax_levels_class[5].split(" ")[1:]))+"\t")
+        outfile.write((" ".join(tax_levels_class[6].split(" ")[1:]))+"\t")
+        outfile.write(tax_levels_class[7]+"\t")
+
+        outfile.write(str(n_detected_genes)+"\t")
+        outfile.write(str(n_MG_multiple_copies)+"\t")
+        outfile.write(str(n_mapped_genes)+"\t")
+        outfile.write(str(n_agreeing_genes)) # "\t" will be after
+
+        for i in matches:
+            outfile.write(i+"#")
+            outfile.write(matches[i]+"#")
+            outfile.write(str(all_matched_perc_id[i])+"\t")
+        outfile.write("\n")
+
+    # CLOSE UP THE PRINTING ####################################################
     if args.output != "":
         try:
             outfile.flush()
@@ -469,6 +495,8 @@ def main(argv=None):
 
 
     return 0        # success
+
+
 
 #-------------------------------- run main -------------------------------------
 if __name__ == '__main__':
