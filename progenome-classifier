@@ -430,9 +430,9 @@ def main(argv=None):
         outfile.write("<h3>Single genes classification</h3>\n")
         outfile.write("<table>\n")
         outfile.write(" <tr>\n")
-        outfile.write("   <th>Gene from fasta file</th>\n")
-        outfile.write("   <th>SpecI gene</th>\n")
-        outfile.write("   <th>Percentage identity</th>\n")
+        outfile.write("   <th style=\"text-align:center\">Gene from fasta file</th>\n")
+        outfile.write("   <th style=\"text-align:center\">SpecI gene</th>\n")
+        outfile.write("   <th style=\"text-align:center\">Percentage identity</th>\n")
         outfile.write(" <tr>\n")
         for i in matches:
             outfile.write(" <tr>\n")
