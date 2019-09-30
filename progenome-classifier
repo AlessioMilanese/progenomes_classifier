@@ -382,6 +382,10 @@ def main(argv=None):
         for i in f_ref_tax:
             all_v = i.rstrip().split("\t")
             tax[all_v[0]] = all_v[1:8]
+            # remove NCBI id
+            for c in range(7):
+                tax[all_v[0]][c] = " ".join(tax[all_v[0]][c].split(" ")[1:])
+
         f_ref_tax.close()
         # find taxonomy agreement
         # we use list_n_max
@@ -389,7 +393,7 @@ def main(argv=None):
             possible_vals = list()
             for vv in list_n_max:
                 possible_vals.append(tax[vv][i])
-            tax_levels_class[i] = " / ".join(list(set(possible_vals)))
+            tax_levels_class[i] = "/".join(list(set(possible_vals)))
         # merge the specI
         tax_levels_class[7] = "/".join(list(set(list_n_max)))
 
@@ -406,18 +410,22 @@ def main(argv=None):
     # PRINT RESULT IN HTML FORMAT ==============================================
     if args.print_html:
         outfile.write("<h2>Result</h2>\n")
-        outfile.write("<strong>kingdom: </strong><em>"+(" ".join(tax_levels_class[0].split(" ")[1:]))+"</em><br>\n")
-        outfile.write("<strong>phylum: </strong><em>"+(" ".join(tax_levels_class[1].split(" ")[1:]))+"</em><br>\n")
-        outfile.write("<strong>class: </strong><em>"+(" ".join(tax_levels_class[2].split(" ")[1:]))+"</em><br>\n")
-        outfile.write("<strong>order: </strong><em>"+(" ".join(tax_levels_class[3].split(" ")[1:]))+"</em><br>\n")
-        outfile.write("<strong>family: </strong><em>"+(" ".join(tax_levels_class[4].split(" ")[1:]))+"</em><br>\n")
-        outfile.write("<strong>genus: </strong><em>"+(" ".join(tax_levels_class[5].split(" ")[1:]))+"</em><br>\n")
-        outfile.write("<strong>species: </strong><em>"+(" ".join(tax_levels_class[6].split(" ")[1:]))+"</em><br>\n")
+        outfile.write("<strong>kingdom: </strong><em>"+tax_levels_class[0]+"</em><br>\n")
+        outfile.write("<strong>phylum: </strong><em>"+tax_levels_class[1]+"</em><br>\n")
+        outfile.write("<strong>class: </strong><em>"+tax_levels_class[2]+"</em><br>\n")
+        outfile.write("<strong>order: </strong><em>"+tax_levels_class[3]+"</em><br>\n")
+        outfile.write("<strong>family: </strong><em>"+tax_levels_class[4]+"</em><br>\n")
+        outfile.write("<strong>genus: </strong><em>"+tax_levels_class[5]+"</em><br>\n")
+        outfile.write("<strong>species: </strong><em>"+tax_levels_class[6]+"</em><br>\n")
         outfile.write("<strong>specI: </strong>")
-        link_to_specI = list()
-        for i in tax_levels_class[7].split("/"):
-            link_to_specI.append('<a href="http://progenomes.embl.de/index.cgi?search='+i+'">'+i+'</a>')
-        outfile.write( (" / ".join(link_to_specI)) + "<br>\n")
+        if tax_levels_class[7] != "-":
+            link_to_specI = list()
+            for i in tax_levels_class[7].split("/"):
+                link_to_specI.append('<a href="http://progenomes.embl.de/index.cgi?search='+i+'">'+i+'</a>')
+            outfile.write( ("/".join(link_to_specI)) + "<br>\n")
+        else:
+            outfile.write("-<br>\n")
+
         outfile.write("<br>\n")
 
         outfile.write("<h3>Classification information</h3>\n")
@@ -447,13 +455,13 @@ def main(argv=None):
         outfile.write("RESULT\n")
         outfile.write("fasta sequence: "+fasta_name+"\n\n")
 
-        outfile.write("kingdom: "+(" ".join(tax_levels_class[0].split(" ")[1:]))+"\n")
-        outfile.write("phylum: "+(" ".join(tax_levels_class[1].split(" ")[1:]))+"\n")
-        outfile.write("class: "+(" ".join(tax_levels_class[2].split(" ")[1:]))+"\n")
-        outfile.write("order: "+(" ".join(tax_levels_class[3].split(" ")[1:]))+"\n")
-        outfile.write("family: "+(" ".join(tax_levels_class[4].split(" ")[1:]))+"\n")
-        outfile.write("genus: "+(" ".join(tax_levels_class[5].split(" ")[1:]))+"\n")
-        outfile.write("species: "+(" ".join(tax_levels_class[6].split(" ")[1:]))+"\n")
+        outfile.write("kingdom: "+tax_levels_class[0]+"\n")
+        outfile.write("phylum: "+tax_levels_class[1]+"\n")
+        outfile.write("class: "+tax_levels_class[2]+"\n")
+        outfile.write("order: "+tax_levels_class[3]+"\n")
+        outfile.write("family: "+tax_levels_class[4]+"\n")
+        outfile.write("genus: "+tax_levels_class[5]+"\n")
+        outfile.write("species: "+tax_levels_class[6]+"\n")
         outfile.write("specI: "+tax_levels_class[7]+"\n\n")
 
 
@@ -473,13 +481,13 @@ def main(argv=None):
     if (not args.print_html) and args.short_output:
         outfile.write(fasta_name+"\t")
 
-        outfile.write((" ".join(tax_levels_class[0].split(" ")[1:]))+"\t")
-        outfile.write((" ".join(tax_levels_class[1].split(" ")[1:]))+"\t")
-        outfile.write((" ".join(tax_levels_class[2].split(" ")[1:]))+"\t")
-        outfile.write((" ".join(tax_levels_class[3].split(" ")[1:]))+"\t")
-        outfile.write((" ".join(tax_levels_class[4].split(" ")[1:]))+"\t")
-        outfile.write((" ".join(tax_levels_class[5].split(" ")[1:]))+"\t")
-        outfile.write((" ".join(tax_levels_class[6].split(" ")[1:]))+"\t")
+        outfile.write(tax_levels_class[0]+"\t")
+        outfile.write(tax_levels_class[1]+"\t")
+        outfile.write(tax_levels_class[2]+"\t")
+        outfile.write(tax_levels_class[3]+"\t")
+        outfile.write(tax_levels_class[4]+"\t")
+        outfile.write(tax_levels_class[5]+"\t")
+        outfile.write(tax_levels_class[6]+"\t")
         outfile.write(tax_levels_class[7]+"\t")
 
         outfile.write(str(n_detected_genes)+"\t")
