@@ -7,10 +7,10 @@
 #
 # ============================================================================ #
 
-motus_version = "2.5.0"
-link_db = "https://zenodo.org/record/3364101/files/db_mOTU_v2.5.0.tar.gz"
-md5_db = "f533a7b55fc133589f08f50648548b42"
-DOI_db = "10.5281/zenodo.3364101"
+motus_version = "0.2.0"
+link_db = "https://zenodo.org/record/3465491/files/progenomes_v0.2.tar.gz"
+md5_db = "340b9c240962f83d36ec1f04a5ae4c2b"
+DOI_db = "10.5281/zenodo.3465491"
 
 import os
 import sys
@@ -81,14 +81,14 @@ def main(argv=None):
     sys.stderr.write("|                           SETUP CLASSIFY-GENOMES                             |\n")
     sys.stderr.write(" ------------------------------------------------------------------------------\n")
     # download the files -------------------------------------------------------
-    path_versions = relative_path + "db_mOTU/versions"
+    path_versions = relative_path + "specI_DB/versions"
     if os.path.isfile(path_versions) and "--force-redownload" not in sys.argv:
         sys.stderr.write("Database already downloaded. Not doing anything.\n"
                          "Use --force-redownload to download again.\n")
         sys.exit(0)
 
-    sys.stderr.write("Download the compressed motus database (~1Gb)\n")
-    db_name = relative_path+"db_mOTU.tar.gz"
+    sys.stderr.write("Download the compressed motus database (~300 Mb)\n")
+    db_name = relative_path+"specI_DB.tar.gz"
 
     if type_download == "python2":
         u = urllib2.urlopen(link_db)
@@ -149,28 +149,6 @@ def main(argv=None):
     sys.stderr.write("Remove zipped file...")
     os.remove(db_name)
     sys.stderr.write("done\n")
-
-    # remove files that are not used
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_bam_header_CEN')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_bam_header_NR')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_taxonomy_CAMI.tsv')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_MAP_MGCs_to_mOTUs_in-line.tsv')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_CEN.fasta.amb')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_CEN.fasta.ann')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_CEN.fasta.annotations')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_CEN.fasta.bwt')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_CEN.fasta.pac')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_CEN.fasta.sa')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_genes_length_NR')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_NR.fasta.amb')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_NR.fasta.ann')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_NR.fasta.bwt')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_NR.fasta.pac')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_DB_NR.fasta.sa')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_padding_coordinates_NR.tsv')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_padding_coordinates_CEN.tsv')))
-    os.remove(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_taxonomy_ref-mOTUs_short_names.tsv')))
-    shutil.rmtree(os.path.abspath(os.path.join(relative_path, 'db_mOTU/db_mOTU_test')))
 
     return 0        # success
 
