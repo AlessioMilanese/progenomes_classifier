@@ -337,6 +337,7 @@ def main(argv=None):
         # we check from matches the congruences and how to classify the input ---
         # find matches
         n_agreeing_genes = "-" # percentage of agreeing genes
+        perc_agreeing_genes = "-" # percentage of agreeing genes
         n_mapped_genes = len(matches)
 
         if len(matches) == 0:
@@ -358,7 +359,8 @@ def main(argv=None):
             if n_max > 1:
                 best = "inconsistent"
             else:
-                n_agreeing_genes = str( ( max_agree/(sum(all_tax.values())) ) * 100 )+"%" # percentage agreeing
+                perc_agreeing_genes = str( ( max_agree/(sum(all_tax.values())) ) * 100 )+"%" # percentage agreeing
+                n_agreeing_genes = str(max_agree)
 
         # print time
         end_assi = time.time()
@@ -432,7 +434,8 @@ def main(argv=None):
         outfile.write("<strong>Number of detected genes:</strong> "+str(n_detected_genes)+"<br>\n")
         outfile.write("<strong>Unique marker genes found in multiple copies [chimera?]:</strong> "+str(n_MG_multiple_copies)+"<br>\n")
         outfile.write("<strong>Number of mapped genes:</strong> "+str(n_mapped_genes)+"<br>\n")
-        outfile.write("<strong>Percentage of agreeing genes:</strong> "+str(n_agreeing_genes)+"<br>\n")
+        outfile.write("<strong>Number of agreeing genes:</strong> "+str(n_agreeing_genes)+"<br>\n")
+        outfile.write("<strong>Percentage of agreeing genes:</strong> "+str(perc_agreeing_genes)+"<br>\n")
         outfile.write("<br>\n")
 
         outfile.write("<h3>Single genes classification</h3>\n")
@@ -469,7 +472,8 @@ def main(argv=None):
         outfile.write("Number of detected genes: "+str(n_detected_genes)+"\n")
         outfile.write("Unique marker genes found in multiple copies [chimera?]: "+str(n_MG_multiple_copies)+"\n")
         outfile.write("Number of mapped genes: "+str(n_mapped_genes)+"\n")
-        outfile.write("Percentage of agreeing genes: "+str(n_agreeing_genes)+"\n\n")
+        outfile.write("Number of agreeing genes: "+str(n_agreeing_genes)+"\n")
+        outfile.write("Percentage of agreeing genes: "+str(perc_agreeing_genes)+"\n\n")
 
         outfile.write("Single genes classification\n")
         for i in matches:
@@ -493,7 +497,8 @@ def main(argv=None):
         outfile.write(str(n_detected_genes)+"\t")
         outfile.write(str(n_MG_multiple_copies)+"\t")
         outfile.write(str(n_mapped_genes)+"\t")
-        outfile.write(str(n_agreeing_genes)) # "\t" will be after
+        outfile.write(str(n_agreeing_genes)+"\t")
+        outfile.write(str(perc_agreeing_genes)) # "\t" will be after
 
         for i in matches:
             outfile.write(i+"#")

@@ -66,6 +66,7 @@ Classification information
 Number of detected genes: 40
 Unique marker genes found in multiple copies [chimera?]: 0
 Number of mapped genes: 40
+Number of agreeing genes: 40
 Percentage of agreeing genes: 100.0%
 
 Single genes classification
@@ -115,7 +116,7 @@ Let's analyse the result:
 
 the genome in the file `AWWC01.1.fsa_nt` is annotated as `Jonquetella anthropi`, which belongs to the specI `specI_v3_Cluster1951`.
 
-The genome contains `40` marker genes (MGs) out of 40. The marker genes have the property to be present in single-copy in bacterial genomes, hence if the tool extract more than 40 MGs there might be problems with the genome that you are analysing (check `Unique marker genes found in multiple copies`). After that there is the information of the number of genes that were mapped to the specI database (`Number of mapped genes`) and the number of genes that support the consensus taxonomy (in this case `100%`).
+The genome contains `40` marker genes (MGs) out of 40. The marker genes have the property to be present in single-copy in bacterial genomes, hence if the tool extract more than 40 MGs there might be problems with the genome that you are analysing (check `Unique marker genes found in multiple copies`). After that there is the information of the number of genes that were mapped to the specI database (`Number of mapped genes`) and the number of genes that support the consensus taxonomy `Number of agreeing genes` (as well as how much percentage of the found ones they represents, in this case `100%`).
 
 Finally, there is a list with all the identified genes, the target gene in the specI database and the percentage identity.
 
