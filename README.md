@@ -135,6 +135,16 @@ for your classification, then the estimated probability to be correct is `0.9`. 
 
 Note that for this simulation we used complete genomes, where the `Number of detected genes` was always higher than `37`. If the number of detected genes for the genome that you are analysing is much lower than that, your probability would be higher. For example, if you detect `5` marker genes and all `5` agrees to the same specI, I would consider the probability higher than the estimated `0.7`.
 
+#### Details of the simulation
+
+We remove some or all the genomes from 1/10th of the specIs (~1,200 specIs).
+
+For 75% of the ~1,200 specIs we remove all genomes from the database, and we used one genome to test if it was correctly not assign to any specI. These genomes can contribute only to the false positives in the evaluation.
+
+For 25% of the ~1,200 specIs we removed half of the genomes. We chose one of the removed genomes and test if it is classified to the correct specI. Since for this set some genomes from the correct specI are available, it is possible to evaluate the true positives.
+
+The simulation is quite conservative, having 3 times more possible false positives, than true positives.
+
 Command options
 --------------
 
