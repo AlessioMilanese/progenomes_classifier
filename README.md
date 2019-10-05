@@ -133,7 +133,7 @@ Number of agreeing genes: 10
 ```
 for your classification, then the estimated probability to be correct is `0.9`. If you have just `5` agreeing genes, the estimated probability to be correct is a little bit higher than `0.7`.
 
-Note that for this simulation we used complete genomes, where the `Number of detected genes` was always higher than `37`. If the number of detected genes for the genome that you are analysing is much lower than that, your probability would probably be higher. For example, if you detect `5` marker genes and all `5` agrees to the same specI, I would consider the probability higher than the estimated `0.7`.
+Note that for this simulation we used complete genomes, where the `Number of detected genes` was always higher than `37`. If the number of detected genes for the genome that you are analysing is much lower than that, your probability would be higher. For example, if you detect `5` marker genes and all `5` agrees to the same specI, I would consider the probability higher than the estimated `0.7`.
 
 Command options
 --------------
