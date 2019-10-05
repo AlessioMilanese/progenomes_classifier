@@ -120,6 +120,13 @@ The genome contains `40` marker genes (MGs) out of 40. The marker genes have the
 
 Finally, there is a list with all the identified genes, the target gene in the specI database and the percentage identity.
 
+Estimate correctness of the assignment
+--------------
+
+To test the classification accuracy we did a simulation (details below) where we removed some genomes from the database and we used them to test the progenome classifier. You can see the results for the precision of the classification (a proxy for the probability of correct assignment) in the following plot:
+![alt text](https://github.com/AlessioMilanese/progenomes_classifier/blob/master/pics/precision.png)
+
+
 Command options
 --------------
 
