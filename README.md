@@ -149,17 +149,16 @@ The classification of a fasta genome is divided into four steps:
 Estimate correctness of the assignment
 --------------
 
-To test the classification accuracy we did a simulation (details below) where we removed some genomes from the database and we used them to test the progenome classifier. You can see the results for the precision of the classification (a proxy for the probability of correct assignment) in the following plot:
+To test the classification accuracy we did a simulation (details below) where we removed some genomes from the database and we used them to test the progenome classifier. You can see the results for the specificity of the classification (a proxy for the probability of correct assignment) in the following plot:
 
-![alt text](https://github.com/AlessioMilanese/progenomes_classifier/blob/master/pics/precision.png)
+![alt text](https://github.com/AlessioMilanese/progenomes_classifier/blob/master/pics/prec_recall.png)
 
 This means that, if you have:
 ```
-Number of agreeing genes: 10
+Number of mapped genes: 14
+Number of agreeing genes: 12
 ```
-for your classification, then the estimated probability to be correct is `0.9`. If you have just `5` agreeing genes, the estimated probability to be correct is a little bit higher than `0.7`.
-
-Note that for this simulation we used complete genomes, where the `Number of detected genes` was always higher than `37`. If the number of detected genes for the genome that you are analysing is much lower than that, your probability would be higher. For example, if you detect `5` marker genes and all `5` agrees to the same specI, I would consider the probability higher than the estimated `0.7`.
+for your classification, then the estimated probability to be correct is `0.98` (or `98%`).
 
 #### Details of the simulation
 
