@@ -125,6 +125,27 @@ The genome contains `40` marker genes (MGs) out of 40. The marker genes have the
 
 Finally, there is a list with all the identified genes, the target gene in the specI database and the percentage identity.
 
+
+Implementation details
+--------------
+
+The classification of a fasta genome is divided into four steps:
+
+1. **Predict genes**, we use Prodigal (Hyatt et al. BMC Bioinf 2010) to predict all genes and proteins from the input fasta file.
+2. **Extract Marker genes**, we extract the 40 marker genes used to build the specI (Ciccareli et al. Science 2006, Mende et al. Nature Methods 2013) using fetchMG.
+3. **Map marker genes to the specI database**, we map the extracted marker genes to the marker genes in the 12,226 specIs. We use vsearch (Rognes et al. PeerJ 2016) with the command `--usearch_global` and option `--maxrejects 10000 --minqt 0.7`. We use marker gene specific thresholds that were calibrated in Milanese et al. Nature Comm. 2019 to distinguish between different species. For example, `COG0049` is a conserved gene with threshold `98.9`, while `COG0124` is evolutionary under less pressure having a threshold of `94.7`.
+4. **Find taxonomy annotation for the genome**. From the annotation of the single genes we derive the annotation for the submitted genome, which can be:
+       * No genes, no marker genes have been detected in the fasta file;
+       * No match, marker genes have been detected in the input genome, but there is no match to the specI taxonomy;
+       * Inconsistent, marker genes have been detected and map to the specI database, but half of the genes map to one specI and the other half to another specI;
+       * Consistent, the majority of the genes agree on one specI.
+
+
+
+
+
+
+
 Estimate correctness of the assignment
 --------------
 
