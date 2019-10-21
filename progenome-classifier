@@ -341,7 +341,7 @@ def main(argv=None):
         n_mapped_genes = len(matches)
 
         if len(matches) == 0:
-            best = "no match"
+            best = "No match"
         else:
             list_founded_speci = list()
             for i in matches:
@@ -354,10 +354,10 @@ def main(argv=None):
             for i in all_tax:
                 if all_tax[i] == max_agree:
                     n_max = n_max + 1
-                    best = i
+                    best = "Consistent"
                     list_n_max.append(i)
             if n_max > 1:
-                best = "inconsistent"
+                best = "Inconsistent"
             else:
                 perc_agreeing_genes = str( ( max_agree/(sum(all_tax.values())) ) * 100 )+"%" # percentage agreeing
                 n_agreeing_genes = str(max_agree)
@@ -369,14 +369,14 @@ def main(argv=None):
    ## =========================================================================
    # if no genes are detected, then no need to run vsearch and map to specI
     else:
-        best = "no_genes"
+        best = "No genes"
         n_mapped_genes = 0
     # ARRIVED HERE: we know what type of match it is
     n_detected_genes = sum(founded_genes.values())
 
     # if it is consistent, or inconsistent we find the taxonomy
     tax_levels_class = ["-","-","-","-","-","-","-","-"]
-    if best != "no_genes" and best != "no match":
+    if best != "No genes" and best != "No match":
         # we only need the taxonomy
         tax = dict()
         f_ref_tax = open(relative_path+"specI_DB/specI_taxonomy.tsv","r")
@@ -399,7 +399,29 @@ def main(argv=None):
         # merge the specI
         tax_levels_class[7] = "/".join(list(set(list_n_max)))
 
+    # Find the accuracy of the assignement
+    if best != "Consistent":
+        accuracy_v = "-"
+    else:
+        # load the data and check
+        try:
+            accu = dict()
+            f_accu = open(relative_path+"specI_DB/confidence_values.tsv","r")
+            f_accu.readline() # remove header
+            for i in f_accu:
+                all_v = i.rstrip().split("\t")
+                accu[str(all_v[0])+"-"+str(all_v[1])] = all_v[2]+" %"
+            f_accu.close()
 
+            curr_genes_info = str(n_agreeing_genes)+"-"+str(n_mapped_genes)
+            if curr_genes_info in accu:
+                accuracy_v = accu[curr_genes_info]
+            else:
+                accuracy_v = "-"
+
+        except:
+            sys.stderr.write("Error while calculating accuracy.\n")
+            accuracy_v = "-"
 
     # SET UP THE PRINTING ######################################################
     # general print
@@ -428,6 +450,10 @@ def main(argv=None):
         else:
             outfile.write("-<br>\n")
 
+        outfile.write("<br>\n")
+
+        outfile.write("<strong>Annotation:</strong> "+str(best)+"<br>\n")
+        outfile.write("<strong>Confidence:</strong> "+str(accuracy_v)+"<br>\n")
         outfile.write("<br>\n")
 
         outfile.write("<h3>Classification information</h3>\n")
@@ -467,6 +493,8 @@ def main(argv=None):
         outfile.write("species: "+tax_levels_class[6]+"\n")
         outfile.write("specI: "+tax_levels_class[7]+"\n\n")
 
+        outfile.write("Annotation: "+best+"\n")
+        outfile.write("Confidence: "+accuracy_v+"\n\n")
 
         outfile.write("Classification information\n")
         outfile.write("Number of detected genes: "+str(n_detected_genes)+"\n")
@@ -493,6 +521,9 @@ def main(argv=None):
         outfile.write(tax_levels_class[5]+"\t")
         outfile.write(tax_levels_class[6]+"\t")
         outfile.write(tax_levels_class[7]+"\t")
+
+        outfile.write(best+"\t")
+        outfile.write(accuracy_v+"\t")
 
         outfile.write(str(n_detected_genes)+"\t")
         outfile.write(str(n_MG_multiple_copies)+"\t")
