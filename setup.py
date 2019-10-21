@@ -7,10 +7,10 @@
 #
 # ============================================================================ #
 
-motus_version = "0.3.0"
-link_db = "https://zenodo.org/record/3470114/files/progenomes_v0.3.tar.gz"
-md5_db = "d2d2e1a43a4cb1a723a9c0fd70c910aa"
-DOI_db = "10.5281/zenodo.3470114"
+motus_version = "0.4.0"
+link_db = "https://zenodo.org/record/3515422/files/progenomes_v0.4.tar.gz"
+md5_db = "0145e018c351f9ad987ad56ac5969cb2"
+DOI_db = "10.5281/zenodo.3515422"
 
 import os
 import sys
