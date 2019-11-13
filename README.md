@@ -2,7 +2,7 @@ Progenome classifier
 ========
 This tool classify genomes sequences (as well as metagenomic assembled genome) according to the specI taxonomy used in [Progenomes 2](http://progenomes.embl.de).
 
-If you are using mOTUs2, please cite:
+If you are using this tool, please cite:
 
 > Daniel Mende, Ivica Letunic, Oleksandr Maistrenko, Thomas S B Schmidt,
 > Alessio Milanese, Lucas Paoli, Ana Hernández-Plaza, Askarbek Orakov,
