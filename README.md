@@ -7,7 +7,7 @@ If you are using mOTUs2, please cite:
 > Daniel Mende, Ivica Letunic, Oleksandr Maistrenko, Thomas S B Schmidt,
 > Alessio Milanese, Lucas Paoli, Ana Hernández-Plaza, Askarbek Orakov,
 > Sofia K Forslund, Shinichi Sunagawa, Georg Zeller, Jaime Huerta-Cepas,
-> Luis Pedro Coelho, Peer Bork
+> Luis Pedro Coelho, Peer Bork.
 > **proGenomes2: an improved database for accurate and consistent habitat, taxonomic and functional annotations of prokaryotic genomes**; _Nucleic Acids Research_  (2019).
 > doi: [10.1093/nar/gkz1002](https://academic.oup.com/nar/advance-article/doi/10.1093/nar/gkz1002/5606617)
 
